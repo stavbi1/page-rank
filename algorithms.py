@@ -15,7 +15,7 @@ def get_cover_time(graph, start_vector):
     covered = {current_vertex}
 
     while not is_covered(graph_size, covered):
-        possible_vertices = np.where(graph[current_vertex])[0]
+        possible_vertices = np.where(graph[:, current_vertex])[0]
         current_vertex = np.random.choice(possible_vertices)
 
         covered.add(current_vertex)
@@ -24,19 +24,92 @@ def get_cover_time(graph, start_vector):
     return cover_time
 
 
+def proj_w_on_u(w, u):
+    return (np.dot(w, u) / (np.linalg.norm(u)**2)) * u
+
+
 def power_iteration(graph):
     graph_size = graph.shape[0]
-    Uprev = np.random.choice([0, 1], size=(graph_size,))
+    eigen_vectors = np.empty((graph_size, 2))
+    eigen_values = np.array([])
 
-    for i in range(100):
-        Vcurr = np.matmul(graph, Uprev)
-        Ucurr = Vcurr / np.linalg.norm(Vcurr)
+    for eigen_vector_index in range(2):
+        Wprev = np.random.choice([0, 1], size=(graph_size,))
 
-        diff = np.linalg.norm(Ucurr - Uprev)
-        Uprev = Ucurr
+        if eigen_vector_index == 0:
+            Uprev = Wprev
+        else:
+            Uprev = Wprev - proj_w_on_u(Wprev, eigen_vectors[:, 0])
 
-        if diff < 2**-6:
-            print('diff:{}, iteration:{}'.format(diff, i))
-            return Ucurr
+        for iteration_number in range(100):
+            Vcurr = np.dot(graph, Uprev)
 
-    return Ucurr
+            if eigen_vector_index != 0:
+                Vcurr = Vcurr - proj_w_on_u(Vcurr, eigen_vectors[:, 0])
+
+            Vcurr_norm = np.linalg.norm(Vcurr)
+
+            if Vcurr_norm != 0:
+                Ucurr = Vcurr / Vcurr_norm
+            else:
+                Ucurr = Vcurr
+
+            diff = np.linalg.norm(Ucurr - Uprev)
+            Uprev = Ucurr
+
+            if diff < 2**-6:
+                print(
+                    'diff:{}, iteration:{}, eigenvalue:{}\n'.format(
+                        diff,
+                        iteration_number,
+                        np.linalg.norm(np.dot(graph, Ucurr))
+                    )
+                )
+                break
+
+        eigen_vectors[:, eigen_vector_index] = Ucurr
+        eigen_values = np.append(eigen_values, np.linalg.norm(np.dot(graph, Ucurr)))
+
+    return eigen_values
+
+
+def get_starting_distributions(n, graph_name):
+    distributions = [np.ones(n)]
+
+    if graph_name == 'lolipop' or graph_name == 'toffee':
+        distributions.append(np.append(np.zeros(n-1), 1))
+
+    return distributions
+
+
+def page_rank(graph, graph_name):
+    n = graph.shape[0]
+    N = n*2
+    t = 100
+
+    distribution_vectors = []
+    histograms = []
+    starting_distributions = get_starting_distributions(n, graph_name)
+
+    for starting_distribution_idx, starting_distribution in enumerate(starting_distributions):
+        distribution_vector = np.zeros(n)
+        histogram = np.array([])
+
+        for t_iteration in range(t):
+            possible_vertices = np.where(starting_distribution)[0]
+            current_vertex = np.random.choice(possible_vertices)
+            distribution_vector[current_vertex] += 1
+            histogram = np.append(histogram, current_vertex)
+
+            for step in range(N):
+                possible_vertices = np.where(graph[:, current_vertex])[0]
+                current_vertex = np.random.choice(possible_vertices)
+                distribution_vector[current_vertex] += 1
+                histogram = np.append(histogram, current_vertex)
+
+        distribution_vector /= t * N
+
+        distribution_vectors.append(distribution_vector)
+        histograms.append(histogram)
+
+    return distribution_vectors, histograms

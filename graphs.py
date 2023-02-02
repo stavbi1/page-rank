@@ -1,8 +1,12 @@
 import numpy as np
 
 
+def to_stochastic(graph):
+    return graph / graph.sum(axis=0)[None, :]
+
+
 def get_clique(n):
-    adj_matrix = np.ones(shape=(n, n))
+    adj_matrix = np.ones(shape=(n, n)) / n
 
     return adj_matrix
 
@@ -12,7 +16,7 @@ def get_ring(n):
     adj_matrix[0, n - 1] = 1
     adj_matrix[n - 1, 0] = 1
 
-    return adj_matrix
+    return to_stochastic(adj_matrix)
 
 
 def get_lolipop(n):
@@ -20,7 +24,7 @@ def get_lolipop(n):
 
     adj_matrix[int(n/2) - 1:, int(n/2) - 1:] = 1
 
-    return adj_matrix
+    return to_stochastic(adj_matrix)
 
 
 def get_toffee(n):
@@ -48,13 +52,13 @@ def get_toffee(n):
 
     adj_matrix[int(3*n/4):, int(3*n/4):] = 1
 
-    return adj_matrix
+    return to_stochastic(adj_matrix)
 
 
 def get_graphs(n):
     return {
-        'clique': get_clique(n),
-        'ring': get_ring(n),
-        'lolipop': get_lolipop(n),
+        #'clique': get_clique(n),
+        #'ring': get_ring(n),
+        #'lolipop': get_lolipop(n),
         'toffee': get_toffee(n)
     }
