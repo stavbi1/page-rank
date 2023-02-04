@@ -1,5 +1,7 @@
 import numpy as np
 
+import graphs
+
 
 def is_covered(graph_size, covered):
     return len(covered) == graph_size
@@ -76,40 +78,40 @@ def power_iteration(graph):
 def get_starting_distributions(n, graph_name):
     distributions = [np.ones(n)]
 
-    if graph_name == 'lolipop' or graph_name == 'toffee':
-        distributions.append(np.append(np.zeros(n-1), 1))
+    #if graph_name == 'lolipop' or graph_name == 'toffee':
+        #distributions.append(np.append(np.zeros(n-1), 1))
 
     return distributions
 
 
-def page_rank(graph, graph_name):
+def page_rank(graph, graph_name, N=2**6):
     n = graph.shape[0]
-    N = n*2
-    t = 100
+    t = 4000
 
     distribution_vectors = []
-    histograms = []
     starting_distributions = get_starting_distributions(n, graph_name)
+    stationary_distribution = graphs.get_stationary_distribution(graph)
 
     for starting_distribution_idx, starting_distribution in enumerate(starting_distributions):
         distribution_vector = np.zeros(n)
-        histogram = np.array([])
 
         for t_iteration in range(t):
             possible_vertices = np.where(starting_distribution)[0]
             current_vertex = np.random.choice(possible_vertices)
             distribution_vector[current_vertex] += 1
-            histogram = np.append(histogram, current_vertex)
 
             for step in range(N):
                 possible_vertices = np.where(graph[:, current_vertex])[0]
                 current_vertex = np.random.choice(possible_vertices)
                 distribution_vector[current_vertex] += 1
-                histogram = np.append(histogram, current_vertex)
 
-        distribution_vector /= t * N
+            diff = np.linalg.norm(stationary_distribution - (distribution_vector / ((N + 1) * (t_iteration + 1))))
+            if diff < 2**-6:
+                print('iteration:{}'.format(t_iteration))
+                break
+
+        distribution_vector /= (N + 1) * (t_iteration + 1)
 
         distribution_vectors.append(distribution_vector)
-        histograms.append(histogram)
 
-    return distribution_vectors, histograms
+    return distribution_vectors, stationary_distribution

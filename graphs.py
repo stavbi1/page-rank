@@ -2,7 +2,8 @@ import numpy as np
 
 
 def to_stochastic(graph):
-    return graph / graph.sum(axis=0)[None, :]
+    #return graph / graph.sum(axis=0)[None, :]
+    return graph
 
 
 def get_clique(n):
@@ -57,8 +58,21 @@ def get_toffee(n):
 
 def get_graphs(n):
     return {
-        #'clique': get_clique(n),
-        #'ring': get_ring(n),
-        #'lolipop': get_lolipop(n),
+        'clique': get_clique(n),
+        'ring': get_ring(n),
+        'lolipop': get_lolipop(n),
         'toffee': get_toffee(n)
     }
+
+
+def get_stationary_distribution(graph):
+    n = graph.shape[0]
+    stationary_dist = np.zeros(n)
+
+    for vertex in range(n):
+        rank = len(np.where(graph[:, vertex])[0])
+        stationary_dist[vertex] = rank
+
+    stationary_dist /= stationary_dist.sum()
+
+    return stationary_dist

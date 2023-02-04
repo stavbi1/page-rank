@@ -1,7 +1,10 @@
+import networkx as nx
+
 import graphs
 import algorithms
 import numpy as np
 import matplotlib.pyplot as plt
+import networkx as nx
 
 def print_cover_times(graph_name, cover_times, is_uniform):
     mean_time = np.mean(cover_times)
@@ -34,17 +37,21 @@ def calculate_cover_times(all_graphs, n):
             print_cover_times(graph_name, cover_times, probability_vector_idx == 0)
 
 
-def calculate_page_rank(all_graphs):
-    distribution, histograms = algorithms.page_rank(all_graphs['lolipop'], 'lolipop')
-    print(distribution)
+def calculate_page_rank(graph, graph_name):
+    distributions, stationary_distribution = algorithms.page_rank(graph, graph_name)
 
     figure, axis = plt.subplots(1, 2)
 
-    axis[0].plot(distribution[0])
+    axis[0].plot(distributions[0])
+
     axis[0].set_title('uniform')
 
-    axis[1].plot(distribution[1])
-    axis[1].set_title('clique')
+    axis[1].plot(stationary_distribution)
+    axis[1].set_title('stationary')
+
+    if len(distributions) > 1:
+        axis[1].plot(distributions[1])
+        axis[1].set_title('clique')
 
     plt.show()
 
@@ -52,17 +59,22 @@ def calculate_page_rank(all_graphs):
 def calculate_eigenvalues_ratio(all_graphs):
     for graph_name, graph in all_graphs.items():
         eigen_values = algorithms.power_iteration(graph)
-        print('graph:{}, eigenValues:{}, ratio:{}'.format(graph_name, eigen_values, eigen_values[0]/eigen_values[1]))
-
-
+        print('graph:{}, eigenValues:{}, ratio:{}'.format(graph_name, eigen_values, eigen_values[1]/eigen_values[0]))
 
 
 if __name__ == '__main__':
-    n = 2**9
+    n = 2**14
     all_graphs = graphs.get_graphs(n)
 
-    calculate_cover_times(all_graphs, n)
+    #lolipop_graph_x = nx.from_numpy_array(all_graphs['toffee'])
+    #pr = nx.pagerank(lolipop_graph_x, 1, max_iter=1000)
+    #plt.plot(pr.values())
+    #plt.show()
+
+    #calculate_cover_times(all_graphs, n)
     #calculate_eigenvalues_ratio(all_graphs)
+    calculate_page_rank(all_graphs['toffee'], 'toffee')
+
 
 
 
