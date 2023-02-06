@@ -2,8 +2,7 @@ import numpy as np
 
 
 def to_stochastic(graph):
-    #return graph / graph.sum(axis=0)[None, :]
-    return graph
+    return graph / graph.sum(axis=0)[None, :]
 
 
 def get_clique(n):
@@ -58,7 +57,7 @@ def get_toffee(n):
 
 def get_graphs(n):
     return {
-        'clique': get_clique(n),
+        #'clique': get_clique(n),
         'ring': get_ring(n),
         'lolipop': get_lolipop(n),
         'toffee': get_toffee(n)

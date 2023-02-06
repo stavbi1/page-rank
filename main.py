@@ -63,7 +63,7 @@ def calculate_eigenvalues_ratio(all_graphs):
 
 
 if __name__ == '__main__':
-    n = 2**14
+    n = 2**6
     all_graphs = graphs.get_graphs(n)
 
     #lolipop_graph_x = nx.from_numpy_array(all_graphs['toffee'])
@@ -71,9 +71,11 @@ if __name__ == '__main__':
     #plt.plot(pr.values())
     #plt.show()
 
+
+
     #calculate_cover_times(all_graphs, n)
     #calculate_eigenvalues_ratio(all_graphs)
-    calculate_page_rank(all_graphs['toffee'], 'toffee')
+    #calculate_page_rank(all_graphs['toffee'], 'toffee')
 
 
 

@@ -59,7 +59,7 @@ def power_iteration(graph):
             diff = np.linalg.norm(Ucurr - Uprev)
             Uprev = Ucurr
 
-            if diff < 2**-6:
+            if diff < 2**-8:
                 print(
                     'diff:{}, iteration:{}, eigenvalue:{}\n'.format(
                         diff,
@@ -77,6 +77,7 @@ def power_iteration(graph):
 
 def get_starting_distributions(n, graph_name):
     distributions = [np.ones(n)]
+    #distributions = [np.append(np.zeros(n-1), 1)]
 
     #if graph_name == 'lolipop' or graph_name == 'toffee':
         #distributions.append(np.append(np.zeros(n-1), 1))
@@ -84,7 +85,7 @@ def get_starting_distributions(n, graph_name):
     return distributions
 
 
-def page_rank(graph, graph_name, N=2**6):
+def page_rank(graph, graph_name, N=2**8):
     n = graph.shape[0]
     t = 4000
 
