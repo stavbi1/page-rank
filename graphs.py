@@ -57,7 +57,7 @@ def get_toffee(n):
 
 def get_graphs(n):
     return {
-        #'clique': get_clique(n),
+        'clique': get_clique(n),
         'ring': get_ring(n),
         'lolipop': get_lolipop(n),
         'toffee': get_toffee(n)

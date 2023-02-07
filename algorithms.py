@@ -36,7 +36,13 @@ def power_iteration(graph):
     eigen_values = np.array([])
 
     for eigen_vector_index in range(2):
-        Wprev = np.random.choice([0, 1], size=(graph_size,))
+        Wprev = np.random.choice([0.0, 1.0], size=(graph_size,))
+
+        while np.linalg.norm(Wprev) == 0:
+            Wprev = np.random.choice([0.0, 1.0], size=(graph_size,))
+
+        Wprev_norm = np.linalg.norm(Wprev)
+        Wprev /= Wprev_norm
 
         if eigen_vector_index == 0:
             Uprev = Wprev
@@ -59,7 +65,7 @@ def power_iteration(graph):
             diff = np.linalg.norm(Ucurr - Uprev)
             Uprev = Ucurr
 
-            if diff < 2**-8:
+            if diff < 2**-6:
                 print(
                     'diff:{}, iteration:{}, eigenvalue:{}\n'.format(
                         diff,

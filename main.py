@@ -63,8 +63,18 @@ def calculate_eigenvalues_ratio(all_graphs):
 
 
 if __name__ == '__main__':
-    n = 2**6
+    n = 2**14
     all_graphs = graphs.get_graphs(n)
+
+    #a = all_graphs['toffee']
+
+    #for i in range(10):
+    #    q, r = np.linalg.qr(a)
+    #    a = np.dot(r, q)
+
+    #np.set_printoptions(precision=3)
+    #np.set_printoptions(suppress=True)
+    #print(a)
 
     #lolipop_graph_x = nx.from_numpy_array(all_graphs['toffee'])
     #pr = nx.pagerank(lolipop_graph_x, 1, max_iter=1000)
@@ -75,7 +85,7 @@ if __name__ == '__main__':
 
     #calculate_cover_times(all_graphs, n)
     #calculate_eigenvalues_ratio(all_graphs)
-    #calculate_page_rank(all_graphs['toffee'], 'toffee')
+    calculate_page_rank(all_graphs['clique'], 'clique')
 
 
 
